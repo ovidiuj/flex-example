@@ -9,6 +9,15 @@ doctrine:
         result_cache_driver:
             type: service
             id: doctrine.result_cache_provider
+        auto_mapping: true
+        # the standard distribution overrides this to be true in debug, false otherwise
+        auto_generate_proxy_classes: false
+        proxy_namespace: Proxies
+        proxy_dir: '%kernel.cache_dir%/doctrine/orm/Proxies'
+        default_entity_manager: default
+        metadata_cache_driver: array
+        query_cache_driver: array
+        result_cache_driver: array
 
 services:
     doctrine.result_cache_provider:

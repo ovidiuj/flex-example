@@ -32,3 +32,16 @@ services:
         MYSQL_USER: symfony
         MYSQL_PASSWORD: symfony
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+    restart: always
+    ports:
+      - 81:80
+    depends_on:
+      - db
+    environment:
+      MYSQL_USERNAME: symfony
+      MYSQL_ROOT_PASSWORD: symfony
+      PMA_HOSTS: db

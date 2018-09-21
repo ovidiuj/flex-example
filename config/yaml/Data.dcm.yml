@@ -1,0 +1,25 @@
+Data:
+  type: entity
+  table: data
+  id:
+    id:
+      type: integer
+      generator:
+        strategy: AUTO
+  fields:
+    max_temp:
+      type: double
+    datetime:
+      type: datetime
+    temp:
+      type: double
+    min_temp:
+      type: double
+  oneToOne:
+    city:
+      targetEntity: City
+      inversedBy: data
+      joinColumn:
+        name: city_id
+        referencedColumnName: id
+
