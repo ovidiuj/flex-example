@@ -1,0 +1,11 @@
+2018/09/20 14:59:13 [emerg] 1#1: unknown directive "listen:" in /etc/nginx/conf.d/symfony.conf:4
+2018/09/20 14:59:25 [emerg] 1#1: unknown directive "listen:" in /etc/nginx/conf.d/symfony.conf:4
+2018/09/20 15:15:11 [emerg] 1#1: "daemon" directive is duplicate in /etc/nginx/nginx.conf:29
+2018/09/20 15:15:21 [emerg] 1#1: "daemon" directive is duplicate in /etc/nginx/nginx.conf:29
+2018/09/20 15:15:53 [emerg] 1#1: "daemon" directive is duplicate in /etc/nginx/nginx.conf:29
+2018/09/20 15:16:08 [emerg] 1#1: "daemon" directive is duplicate in /etc/nginx/nginx.conf:29
+2018/09/20 15:18:35 [emerg] 1#1: upstream "php-upstream" may not have port 9000 in /etc/nginx/conf.d/symfony.conf:16
+2018/09/20 15:18:44 [emerg] 1#1: upstream "php-upstream" may not have port 9000 in /etc/nginx/conf.d/symfony.conf:16
+2018/09/20 15:19:41 [emerg] 1#1: upstream "php-upstream" may not have port 9000 in /etc/nginx/conf.d/symfony.conf:16
+2018/09/20 15:20:11 [emerg] 1#1: host not found in upstream "php-fpm" in /etc/nginx/conf.d/symfony.conf:16
+2018/09/20 15:20:53 [emerg] 1#1: host not found in upstream "php-fpm" in /etc/nginx/conf.d/symfony.conf:16
