@@ -28,3 +28,16 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    http.client:
+        class: \GuzzleHttp\Client
+        autowire: true
+
+    reporting.data:
+        class: App\Service\HttpService
+        arguments: ['@jms_serializer']
+
+
+jms_serializer:
+    metadata:
+        auto_detection: true
