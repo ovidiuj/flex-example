@@ -19,17 +19,24 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CityRepository extends ServiceEntityRepository
 {
+    /**
+     * CityRepository constructor.
+     * @param RegistryInterface $registry
+     */
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, City::class);
     }
 
+    /**
+     * @param CityDTO $cityDTO
+     */
     public function create(CityDTO $cityDTO)
     {
         try {
             $cityName = $cityDTO->getCityName();
             $city = $this->findByName($cityName);
-            if($cityName !== null && (empty($city) === true || !($city instanceof City))) {
+            if ($cityName !== null && (empty($city) === true || !($city instanceof City))) {
                 $city = new City();
                 $city->setCityName($cityDTO->getCityName());
                 $city->setCountryCode($cityDTO->getCountryCode());
@@ -51,7 +58,7 @@ class CityRepository extends ServiceEntityRepository
             }
 
 
-            if($city instanceof City) {
+            if ($city instanceof City) {
                 // tell Doctrine you want to (eventually) save the Product (no queries yet)
                 $this->getEntityManager()->persist($city);
 
@@ -77,19 +84,48 @@ class CityRepository extends ServiceEntityRepository
             ->orderBy('c.id', 'ASC')
             ->setMaxResults(1)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
 
-    /*
-    public function findOneBySomeField($value): ?City
+    /**
+     * @return mixed
+     */
+    public function getData()
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
+            ->innerJoin('c.data', 'cd')
+            ->orderBy('cd.datetime', 'DESC')
+            ->setMaxResults(7)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
+
+    /**
+     * @return mixed
+     */
+    public function getCountries()
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.country_code')
+            ->distinct()
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param null $countryCode
+     * @return mixed
+     */
+    public function getCountryCities($countryCode = null)
+    {
+        $queryBuilder = $this->createQueryBuilder('c')
+            ->groupBy('c.country_code');
+
+        if ($countryCode) {
+            $queryBuilder->andWhere('c.country_code <= :country_code')
+                ->setParameter('country_code', $countryCode);
+        }
+        return $queryBuilder->getQuery()->getResult();
+    }
+
 }

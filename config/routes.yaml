@@ -2,7 +2,20 @@ index:
     path: /
     controller: App\Controller\DefaultController::index
 
-data:
-    path: /data
-    controller: App\Controller\DefaultController::data
+city-data:
+    path: /city-data
+    controller: App\Controller\DefaultController::cityData
+
+avg-temp:
+    path: /avg-temp
+    controller: App\Controller\DefaultController::avgTemp
+
+
+country-list:
+    path: /countries
+    controller: App\Controller\DefaultController::countries
+
+country-cities:
+    path: /country-cities
+    controller: App\Controller\DefaultController::countryCities
 

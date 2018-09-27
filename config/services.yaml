@@ -37,6 +37,10 @@ services:
         class: App\Service\HttpService
         arguments: ['@jms_serializer']
 
+    api.service:
+        class: App\Service\ApiService
+        arguments: ['@jms_serializer']
+
 
 jms_serializer:
     metadata:

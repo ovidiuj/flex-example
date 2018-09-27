@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CityRepository")
  */
-class City
+class City implements EntityInterface
 {
     /**
      * @ORM\Id()
@@ -84,7 +84,7 @@ class City
         return $this;
     }
 
-    public function getData(): ?array
+    public function getData()
     {
         return $this->data;
     }

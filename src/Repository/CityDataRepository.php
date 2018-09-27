@@ -14,37 +14,75 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class CityDataRepository extends ServiceEntityRepository
 {
+    /**
+     * CityDataRepository constructor.
+     * @param RegistryInterface $registry
+     *
+     */
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, CityData::class);
     }
 
-//    /**
-//     * @return CityData[] Returns an array of CityData objects
-//     */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?CityData
+    /**
+     * @param array $params
+     * @return mixed
+     */
+    public function getData(array $params = [])
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $queryBuilder = $this->getCityDataQuery($params);
+
+        if(isset($params['sort']) && is_array($params['sort']) === true) {
+            $queryBuilder->orderBy('cd.' . key($params['sort']) , current($params['sort']));
+        } else {
+            $queryBuilder->orderBy('cd.datetime', 'DESC')
+                ->setMaxResults(7);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
-    */
+
+    /**
+     * @param array $params
+     * @return mixed
+     */
+    public function getAvgTemp(array $params = [])
+    {
+        $queryBuilder = $this->getCityDataQuery($params);
+
+        if(isset($params['sort']) && is_array($params['sort']) === true) {
+            $queryBuilder->orderBy('avg_temp' , current($params['sort']));
+        } else {
+            $queryBuilder->orderBy('cd.datetime', 'DESC')
+                ->setMaxResults(7);
+        }
+
+        $queryBuilder->groupBy('cd.city');
+
+        return $queryBuilder->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param array $params
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    private function getCityDataQuery($params = [])
+    {
+        $queryBuilder = $this->createQueryBuilder('cd')
+            ->innerJoin('cd.city', 'c');
+
+        if(isset($params['minDate']) && empty($params['minDate']) === false) {
+            $queryBuilder->andWhere('cd.datetime >= :start_date')
+                ->setParameter('start_date', $params['minDate']);
+        }
+        if(isset($params['maxDate']) && empty($params['maxDate']) === false) {
+            $queryBuilder->andWhere('cd.datetime <= :end_date')
+                ->setParameter('end_date', $params['maxDate']);
+        }
+
+        return $queryBuilder;
+    }
+
 }
