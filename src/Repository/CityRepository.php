@@ -104,25 +104,40 @@ class CityRepository extends ServiceEntityRepository
      */
     public function getCountries()
     {
-        return $this->createQueryBuilder('c')
+        $queryBuilder = $this->createQueryBuilder('c')
             ->select('c.country_code')
-            ->distinct()
-            ->getQuery()
+            ->distinct();
+        if(isset($params['first']) && empty($params['first']) === false) {
+            $queryBuilder->setFirstResult((int) $params['first']);
+        }
+
+        if(isset($params['last']) && empty($params['last']) === false) {
+            $queryBuilder->setMaxResults((int) $params['last']);
+        }
+        return $queryBuilder->getQuery()
             ->getResult();
     }
 
     /**
-     * @param null $countryCode
+     * @param array $params
      * @return mixed
      */
-    public function getCountryCities($countryCode = null)
+    public function getCountryCities($params = [])
     {
         $queryBuilder = $this->createQueryBuilder('c');
 
-        if ($countryCode) {
+        if(isset($params['country_code']) && empty($params['country_code']) === false) {
             $queryBuilder->andWhere('c.country_code = :country_code')
-                ->setParameter('country_code', $countryCode);
+                ->setParameter('country_code', $params['country_code']);
         }
+        if(isset($params['first']) && empty($params['first']) === false) {
+            $queryBuilder->setFirstResult((int) $params['first']);
+        }
+
+        if(isset($params['last']) && empty($params['last']) === false) {
+            $queryBuilder->setMaxResults((int) $params['last']);
+        }
+
         return $queryBuilder->getQuery()->getResult();
     }
 

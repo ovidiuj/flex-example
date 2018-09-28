@@ -118,10 +118,9 @@ class DefaultController extends AbstractController
     public function countryCities()
     {
         $results = [];
-        $countryCode = $this->request->query->get('country_code');
         $cityRepository = $this->getDoctrine()
             ->getRepository(City::class);
-        $data = $cityRepository->getCountryCities($countryCode);
+        $data = $cityRepository->getCountryCities($this->getRequestParams());
 
         if(empty($data) === false && is_array($data)) {
             foreach ($data as $key => $city) {
@@ -170,6 +169,12 @@ class DefaultController extends AbstractController
         if(empty($temp) === false) {
             $params['sort']['temp'] = isset(self::$sortOptions[$temp]) ? self::$sortOptions[$temp] : self::DEFAULT_SORT;
         }
+
+        $code = $this->request->query->get('country_code');
+        if(empty($code) === false) {
+            $params['country_code'] = $code;
+        }
+
         $page = (int) $this->request->query->get('page');
         if($page > 0) {
             $params['last'] = $this->apiService->getNumberOfResultsPerPage() * $page;
