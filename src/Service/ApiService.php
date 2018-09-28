@@ -4,11 +4,10 @@ namespace App\Service;
 
 
 use App\DTO\ApiCityDTO;
-use App\DTO\CityDTO;
 use App\Entity\City;
 use App\Entity\CityData;
-use App\Entity\EntityInterface;
 use JMS\Serializer\SerializerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Intl\Intl;
 
 /**
@@ -23,36 +22,69 @@ class ApiService
     private $serializer;
 
     /**
+     * @var int
+     */
+    private $numberOfResultsPerPage = 5;
+
+    /**
      * ApiService constructor.
      * @param SerializerInterface $serializer
+     * @param ParameterBagInterface $params
      */
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SerializerInterface $serializer, ParameterBagInterface $params)
     {
         $this->serializer = $serializer;
+        if($params->get('numberOfResultsPerPage')) {
+            $this->numberOfResultsPerPage = $params->get('numberOfResultsPerPage');
+        }
     }
 
     /**
-     * @param array $cities
+     * @param array $entities
      * @return array|\JMS\Serializer\scalar|object
      */
-    public function createDataTransferObjects(array $cities)
+    public function createDataTransferObjects(array $entities)
     {
         $output = [];
-        $temp = null;
-        foreach ($cities as $data) {
-            if(is_array($data) && isset($data['avg_temp'])) {
+        foreach ($entities as $cityData) {
+            if ($cityData instanceof CityData) {
+                $output[] = $this->createCityDataDataTransferObjects($cityData);
+            }
+        }
+        $jsonData = $this->serializer->serialize($output, 'json');
+        return $this->serializer->deserialize($jsonData, 'array', 'json');
+    }
+
+
+    /**
+     * @param array $entities
+     * @return array|\JMS\Serializer\scalar|object
+     */
+    public function createAvgDataTransferObjects(array $entities)
+    {
+        $output = [];
+        $temp = $cityData = null;
+        foreach ($entities as $data) {
+            if (is_array($data) && isset($data['avg_temp'])) {
                 $cityData = $data[0];
                 $temp = $data['avg_temp'];
-            } else {
-                $cityData = $data;
             }
 
-            if($cityData instanceof CityData) {
+            if ($cityData instanceof CityData) {
                 $output[] = $this->createCityDataDataTransferObjects($cityData, $temp);
             }
         }
-        $jsonData =  $this->serializer->serialize($output, 'json');
+        $jsonData = $this->serializer->serialize($output, 'json');
         return $this->serializer->deserialize($jsonData, 'array', 'json');
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getNumberOfResultsPerPage()
+    {
+        return $this->numberOfResultsPerPage;
     }
 
     /**

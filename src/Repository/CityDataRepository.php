@@ -43,13 +43,10 @@ class CityDataRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    /**
-     * @param array $params
-     * @return mixed
-     */
     public function getAvgTemp(array $params = [])
     {
         $queryBuilder = $this->getCityDataQuery($params);
+        $queryBuilder->select(['cd', 'AVG(cd.temp) as avg_temp']);
 
         if(isset($params['sort']) && is_array($params['sort']) === true) {
             $queryBuilder->orderBy('avg_temp' , current($params['sort']));
@@ -63,6 +60,7 @@ class CityDataRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()
             ->getResult();
     }
+
 
     /**
      * @param array $params
@@ -82,7 +80,41 @@ class CityDataRepository extends ServiceEntityRepository
                 ->setParameter('end_date', $params['maxDate']);
         }
 
+        if(isset($params['first']) && empty($params['first']) === false) {
+            $queryBuilder->setFirstResult((int) $params['first']);
+        }
+
+        if(isset($params['last']) && empty($params['last']) === false) {
+            $queryBuilder->setMaxResults((int) $params['last']);
+        }
+
         return $queryBuilder;
+    }
+
+    /**
+     * @param array $params
+     * @return mixed
+     */
+    public function getBestWeekendData(array $params = [])
+    {
+        $queryBuilder = $this->getCityDataQuery($params);
+        $queryBuilder->select(['cd', 'AVG(cd.temp) as avg_temp']);
+
+        $queryBuilder->andWhere('DAYOFWEEK(cd.datetime) = :sunday OR DAYOFWEEK(cd.datetime) = :saturday');
+        $queryBuilder->setParameter('saturday', 7);
+        $queryBuilder->setParameter('sunday', 1);
+
+        if(isset($params['sort']) && is_array($params['sort']) === true) {
+            $queryBuilder->orderBy('avg_temp', current($params['sort']));
+        } else {
+            $queryBuilder->orderBy('avg_temp', 'DESC')
+                ->setMaxResults(7);
+        }
+
+        $queryBuilder->groupBy('cd.city');
+
+        return $queryBuilder->getQuery()
+            ->getResult();
     }
 
 }

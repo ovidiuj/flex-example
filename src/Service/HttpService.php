@@ -5,8 +5,13 @@ use App\DTO\DataDTO;
 use App\DTO\CityDTO;
 use GuzzleHttp\Client;
 use JMS\Serializer\SerializerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class HttpService
+ * @package App\Service
+ */
 class HttpService
 {
     /**
@@ -17,7 +22,7 @@ class HttpService
     /**
      * @var string
      */
-    private $apiBaseUrl = 'https://yoc-media.github.io/weather/report/';
+    private $apiBaseUrl;
 
     /**
      *
@@ -47,11 +52,13 @@ class HttpService
     /**
      * HttpService constructor.
      * @param SerializerInterface $serializer
+     * @param ParameterBagInterface $params
      */
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SerializerInterface $serializer, ParameterBagInterface $params)
     {
         $this->serializer = $serializer;
         $this->httpClient = new Client();
+        $this->apiBaseUrl = $params->get('apiBaseUrl');
         $this->setApiUrl();
     }
 

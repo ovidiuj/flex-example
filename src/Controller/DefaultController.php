@@ -4,13 +4,10 @@ namespace App\Controller;
 
 use App\Entity\City;
 use App\Entity\CityData;
-use App\Repository\CityRepository;
 use App\Service\ApiService;
 use App\Service\Validator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Intl;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -67,7 +64,7 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/city-data", name="default")
+     * @Route("/city-data")
      */
     public function cityData()
     {
@@ -81,7 +78,7 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/avg-temp", name="default")
+     * @Route("/avg-temp")
      */
     public function avgTemp()
     {
@@ -90,13 +87,13 @@ class DefaultController extends AbstractController
             ->getRepository(CityData::class);
         $data = $cityDataRepository->getAvgTemp($this->getRequestParams());
 
-        $jsonData = $this->apiService->createDataTransferObjects($data);
+        $jsonData = $this->apiService->createAvgDataTransferObjects($data);
 
         return $this->json($jsonData);
     }
 
     /**
-     * @Route("/countries", name="default")
+     * @Route("/countries")
      */
     public function countries()
     {
@@ -116,7 +113,7 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/country-cities", name="default")
+     * @Route("/country-cities")
      */
     public function countryCities()
     {
@@ -142,6 +139,20 @@ class DefaultController extends AbstractController
     }
 
     /**
+     * @Route("/best-weekend")
+     */
+    public function bestWeekend()
+    {
+
+        $cityDataRepository = $this->getDoctrine()
+            ->getRepository(CityData::class);
+        $data = $cityDataRepository->getBestWeekendData($this->getRequestParams());
+        $jsonData = $this->apiService->createAvgDataTransferObjects($data);
+
+        return $this->json($jsonData);
+    }
+
+    /**
      * @return array
      */
     private function getRequestParams()
@@ -158,6 +169,11 @@ class DefaultController extends AbstractController
         $temp = $this->request->query->get('temperature');
         if(empty($temp) === false) {
             $params['sort']['temp'] = isset(self::$sortOptions[$temp]) ? self::$sortOptions[$temp] : self::DEFAULT_SORT;
+        }
+        $page = (int) $this->request->query->get('page');
+        if($page > 0) {
+            $params['last'] = $this->apiService->getNumberOfResultsPerPage() * $page;
+            $params['first'] = ($this->apiService->getNumberOfResultsPerPage() * $page) - $this->apiService->getNumberOfResultsPerPage();
         }
 
         return $params;

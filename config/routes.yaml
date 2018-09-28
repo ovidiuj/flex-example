@@ -1,21 +1,31 @@
 index:
     path: /
     controller: App\Controller\DefaultController::index
+    methods:  [GET]
 
 city-data:
     path: /city-data
     controller: App\Controller\DefaultController::cityData
+    methods:  [GET]
 
 avg-temp:
     path: /avg-temp
     controller: App\Controller\DefaultController::avgTemp
-
+    methods:  [GET]
 
 country-list:
     path: /countries
     controller: App\Controller\DefaultController::countries
+    methods:  [GET]
 
 country-cities:
     path: /country-cities
     controller: App\Controller\DefaultController::countryCities
+    methods:  [GET]
+
+best-weekend:
+    path: /best-weekend
+    controller: App\Controller\DefaultController::bestWeekend
+    methods:  [GET]
+
 

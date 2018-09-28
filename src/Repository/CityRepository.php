@@ -9,7 +9,6 @@ use App\Entity\CityData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @method City|null find($id, $lockMode = null, $lockVersion = null)
@@ -118,11 +117,10 @@ class CityRepository extends ServiceEntityRepository
      */
     public function getCountryCities($countryCode = null)
     {
-        $queryBuilder = $this->createQueryBuilder('c')
-            ->groupBy('c.country_code');
+        $queryBuilder = $this->createQueryBuilder('c');
 
         if ($countryCode) {
-            $queryBuilder->andWhere('c.country_code <= :country_code')
+            $queryBuilder->andWhere('c.country_code = :country_code')
                 ->setParameter('country_code', $countryCode);
         }
         return $queryBuilder->getQuery()->getResult();
