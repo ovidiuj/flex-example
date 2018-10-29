@@ -22,8 +22,8 @@ services:
       - '9001:9000'
 
   db:
-    image: mysql
-    command: ["--default-authentication-plugin=mysql_native_password", "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"]
+    image: mysql:5.7
+    command: mysqld --sql_mode=""
     ports:
         - "3306:3306"
     environment:
